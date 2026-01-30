@@ -1,9 +1,10 @@
 #include <iostream>
 #include <random>
-
+#include <fstream>
+#include "game.hpp"
 namespace game
 {
-int generate_randon_number (int min, int max)
+int generate_random_number (int min, int max)
 {
     std::random_device              rd;
     std::mt19937                    gen (rd ());
@@ -12,30 +13,38 @@ int generate_randon_number (int min, int max)
     return dis (gen);
 }
 
+bool init_winner_table() {
+    std::ofstream winners(WINNER_TABLE_F);
+
+    return winners.is_open();
+}
+
 void guess_game ()
 {
     std::cout << "Let's the game begin!" << std::endl;
 
     // prepare random num
-    int hidden_number = generate_randon_number (1, 100);
-    int user_choice;
+    int hidden_number = generate_random_number (1, 100);
+    int user_choice, attempts = 0;
     while (true)
     {
-        std::cout << "Enter your nuber:";
+        std::cout << "Enter your nuber: ";
         std::cin >> user_choice;
+
+        attempts++;
 
         if (user_choice == hidden_number)
         {
-            std::cout << "You are winner !" << std::endl;
+            std::cout << "you win! attempts = " << attempts << std::endl;
             break;
         }
         else if (user_choice < hidden_number)
         {
-            std::cout << "Too low, try again !" << std::endl;
+            std::cout << "greater than " << user_choice << std::endl;
         }
         else
         {
-            std::cout << "Too high, try again !" << std::endl;
+            std::cout << "less than " << user_choice << std::endl;
         }
     }
 }
