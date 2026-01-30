@@ -1,13 +1,51 @@
-#include "gues_game/game.hpp"
+#include <cstring>  // for string comparation;
 #include <iostream>
 
-int main ()
-{   
-    if(!game::init_winner_table()) {
-        std::cout << "failed to open winners DB";
-        return -1;
+#include "gues_game/game.hpp"
+
+inline constexpr const char* TABLE_CMD   = "-table";
+inline constexpr const char* MAX_VALUE   = "-max";
+const int                    DEFAULT_MAX = 100;
+
+int main (int argc, char* argv[])
+{
+    int max_value = DEFAULT_MAX;
+
+    if (argc >= 2)
+    {
+        if (std::strcmp (argv[1], TABLE_CMD) == 0)
+        {
+            game::print_winners ();
+            return 0;
+        }
+        else if (std::strcmp (argv[1], MAX_VALUE) == 0)
+        {
+            if (argc > 2)
+            {  // validate that 3rd arg was provided
+                int user_max = std::atoi (argv[2]);
+                if (user_max <= 0)
+                {
+                    std::cout << "max value out of range, using default " << DEFAULT_MAX;
+                }
+                max_value = std::atoi (argv[2]);
+            }
+            else
+            {
+                std::cout << "invalid value, will use default " << DEFAULT_MAX << std::endl;
+            }
+        }
+        else
+        {
+            std::cout << "unknown arg " << argv[1];
+            return -2;
+        }
     }
-    game::guess_game ();
+
+    // start the game
+    std::string user_name = game::init_user ();
+    int         attempts  = game::guess_game (max_value);
+    game::write_new_winner (user_name, attempts);
+    game::print_winners ();
 
     return 0;
 }
