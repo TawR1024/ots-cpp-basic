@@ -15,6 +15,19 @@ int generate_random_number (int min, int max)
     return dis (gen);
 }
 
+bool validate_top_table_exist(bool create){
+   std::ifstream file(WINNER_TABLE_F);
+
+   if (file.good()) // if file exist
+        return true;
+    
+    if(!create) // if file not exist and we should not create new one;
+        return false;
+
+    std::ofstream new_file (WINNER_TABLE_F); // otherwise create new file
+    return new_file.good();
+}
+
 void write_new_winner (std::string name, int attempts)
 {
     std::fstream winners (WINNER_TABLE_F, std::ios::in | std::ios::out | std::ios::binary);
@@ -35,6 +48,7 @@ void write_new_winner (std::string name, int attempts)
     char      buffer[record_size];
     int       cursor_p = 0;
     UserEntry rec;
+
     while (winners.read (buffer, record_size))
     {
         std::memcpy (&rec, buffer, record_size);  // read record to buffer;

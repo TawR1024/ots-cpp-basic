@@ -2,7 +2,6 @@
 #include <string.h>
 
 #include <fstream>
-#include <vector>
 
 namespace game
 {
@@ -27,6 +26,10 @@ std::string init_user ();
 
 // Provides interactive communication for player.
 int guess_game (int max_value);
+
+// validates that provied file exist.
+// if @param create true will create new file.
+bool validate_top_table_exist(bool create);
 
 // writes winner record to WINNER_TABLE_F.
 // Updates record if it exist.

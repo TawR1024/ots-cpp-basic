@@ -11,11 +11,18 @@ int main (int argc, char* argv[])
 {
     int max_value = DEFAULT_MAX;
 
+    // game::init_winners_table();
+
     if (argc >= 2)
     {
         if (std::strcmp (argv[1], TABLE_CMD) == 0)
         {
-            game::print_winners ();
+            if (game::validate_top_table_exist(false)) {
+                game::print_winners ();
+            }else {
+                std::cout << "winners table does not exist" << std::endl;
+            }
+         
             return 0;
         }
         else if (std::strcmp (argv[1], MAX_VALUE) == 0)
@@ -44,6 +51,12 @@ int main (int argc, char* argv[])
     // start the game
     std::string user_name = game::init_user ();
     int         attempts  = game::guess_game (max_value);
+
+    if(!game::validate_top_table_exist(true)) {
+        std::cout << "winners table file corrupted"<< std::endl;
+        std::cout << "result will not recoded"<< std::endl;
+        return -1;
+    }
     game::write_new_winner (user_name, attempts);
     game::print_winners ();
 
