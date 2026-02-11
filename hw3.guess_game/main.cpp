@@ -17,12 +17,15 @@ int main (int argc, char* argv[])
     {
         if (std::strcmp (argv[1], TABLE_CMD) == 0)
         {
-            if (game::validate_top_table_exist(false)) {
+            if (game::validate_top_table_exist (false))
+            {
                 game::print_winners ();
-            }else {
+            }
+            else
+            {
                 std::cout << "winners table does not exist" << std::endl;
             }
-         
+
             return 0;
         }
         else if (std::strcmp (argv[1], MAX_VALUE) == 0)
@@ -52,13 +55,14 @@ int main (int argc, char* argv[])
     std::string user_name = game::init_user ();
     int         attempts  = game::guess_game (max_value);
 
-    if(!game::validate_top_table_exist(true)) {
-        std::cout << "winners table file corrupted"<< std::endl;
-        std::cout << "result will not recoded"<< std::endl;
+    if (!game::validate_top_table_exist (true))
+    {
+        std::cout << "winners table file corrupted" << std::endl;
+        std::cout << "result will not recorded" << std::endl;
         return -1;
     }
     game::write_new_winner (user_name, attempts);
-    game::print_winners ();
+    game::print_winners();
 
     return 0;
 }

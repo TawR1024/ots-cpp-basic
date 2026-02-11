@@ -15,17 +15,18 @@ int generate_random_number (int min, int max)
     return dis (gen);
 }
 
-bool validate_top_table_exist(bool create){
-   std::ifstream file(WINNER_TABLE_F);
+bool validate_top_table_exist (bool create)
+{
+    std::ifstream file (WINNER_TABLE_F);
 
-   if (file.good()) // if file exist
+    if (file.good ())  // if file exist
         return true;
-    
-    if(!create) // if file not exist and we should not create new one;
+
+    if (!create)  // if file not exist and we should not create new one;
         return false;
 
-    std::ofstream new_file (WINNER_TABLE_F); // otherwise create new file
-    return new_file.good();
+    std::ofstream new_file (WINNER_TABLE_F);  // otherwise create new file
+    return new_file.good ();
 }
 
 void write_new_winner (std::string name, int attempts)
@@ -55,7 +56,7 @@ void write_new_winner (std::string name, int attempts)
         if (strcmp (rec.username, user.username) == 0)
         {
             rec.score = user.score;  // update attempts;
-
+            
             winners.seekp (cursor_p);  // move cursor to stat of record;
             std::memcpy (buffer, &rec, record_size);
             winners.write (buffer, record_size);  // rewrite current record;
@@ -66,6 +67,7 @@ void write_new_winner (std::string name, int attempts)
     }
 
     // uppend file if record does not exists;
+    winners.clear(); // clean fail bit;
     winners.seekp (0, std::ios::end);  // move cursor to the end of file;
 
     std::memcpy (buffer, &user, sizeof (UserEntry));
@@ -100,9 +102,33 @@ void print_winners ()
 
 std::string init_user ()
 {
-    std::cout << "Hi! Enter your name, please:" << std::endl;
     std::string user_name;
-    std::cin >> user_name;
+
+    while (true)
+    {
+        std::cout << "Hi! Enter your name, please:\n";
+
+        if (!std::getline (std::cin, user_name))
+        {
+            std::cout << "Input error. Try again.\n";
+            std::cin.clear ();
+            continue;
+        }
+
+        if (user_name.empty ())
+        {
+            std::cout << "Name cannot be empty.\n";
+            continue;
+        }
+
+        if (user_name.size () > NAME_SIZE)
+        {
+            std::cout << "Name is too long (max " << NAME_SIZE << " characters).\n";
+            continue;
+        }
+
+        break;
+    }
 
     return user_name;
 }
@@ -117,7 +143,14 @@ int guess_game (int max_value)
     while (true)
     {
         std::cout << "Enter your nuber: ";
-        std::cin >> user_choice;
+        if (!(std::cin >> user_choice))
+        {
+            std::cout << "invalid input" << std::endl;
+
+            std::cin.clear ();                                                     // clear failbit
+            std::cin.ignore (std::numeric_limits<std::streamsize>::max (), '\n');  // skipp all symbols until new line;
+            continue;
+        }
 
         attempts++;
 

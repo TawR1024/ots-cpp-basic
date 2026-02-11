@@ -6,9 +6,9 @@
 namespace game
 {
 constexpr int                NAME_SIZE      = 32;
-inline constexpr const char* WINNER_TABLE_F = "winners.db"; 
+inline constexpr const char* WINNER_TABLE_F = "winners.db";
 
-#pragma pack(1) // to avoid memory alligment;
+#pragma pack(1)  // to avoid memory alligment;
 // Implements user record;
 struct UserEntry
 {
@@ -29,7 +29,7 @@ int guess_game (int max_value);
 
 // validates that provied file exist.
 // if @param create true will create new file.
-bool validate_top_table_exist(bool create);
+bool validate_top_table_exist (bool create);
 
 // writes winner record to WINNER_TABLE_F.
 // Updates record if it exist.
