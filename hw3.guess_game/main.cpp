@@ -62,7 +62,7 @@ int main (int argc, char* argv[])
         return -1;
     }
     game::write_new_winner (user_name, attempts);
-    game::print_winners();
+    game::print_winners ();
 
     return 0;
 }

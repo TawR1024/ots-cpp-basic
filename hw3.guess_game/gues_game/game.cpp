@@ -56,7 +56,7 @@ void write_new_winner (std::string name, int attempts)
         if (strcmp (rec.username, user.username) == 0)
         {
             rec.score = user.score;  // update attempts;
-            
+
             winners.seekp (cursor_p);  // move cursor to stat of record;
             std::memcpy (buffer, &rec, record_size);
             winners.write (buffer, record_size);  // rewrite current record;
@@ -67,7 +67,7 @@ void write_new_winner (std::string name, int attempts)
     }
 
     // uppend file if record does not exists;
-    winners.clear(); // clean fail bit;
+    winners.clear ();                  // clean fail bit;
     winners.seekp (0, std::ios::end);  // move cursor to the end of file;
 
     std::memcpy (buffer, &user, sizeof (UserEntry));
