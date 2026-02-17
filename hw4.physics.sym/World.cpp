@@ -16,7 +16,7 @@ static constexpr double timePerTick = 0.001;
 World::World (const std::string& worldFilePath)
 {
     std::ifstream stream (worldFilePath);
-    
+
     stream >> topLeft;
     stream >> bottomRight;
     physics.setWorldBox (topLeft, bottomRight);
@@ -25,10 +25,9 @@ World::World (const std::string& worldFilePath)
     // уровне прохождения курса нас это устраивает
     while (stream.peek (), stream.good ())
     {
-       
         Ball ball;
         stream >> ball;
-        balls.push_back(ball);
+        balls.push_back (ball);
     }
 }
 

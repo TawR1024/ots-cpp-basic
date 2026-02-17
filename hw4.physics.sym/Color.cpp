@@ -9,5 +9,3 @@ double Color::red () const { return r; }
 double Color::green () const { return g; }
 
 double Color::blue () const { return b; }
-
-
