@@ -20,6 +20,15 @@ void PainterImpl::draw(const Point& center, double radius, const Color& color) {
     // окружности
     const size_t pointsCount = std::max(int(scaledRadius / 2), 20);
 
+    const float left = pos.x - scaledRadius;
+    const float right = pos.x + scaledRadius;
+    const float top = pos.y - scaledRadius;
+    const float bottom = pos.y + scaledRadius;
+
+    if (right < 0 || left > window.getSize().x || bottom < 0 || top > window.getSize().y) {
+        return; 
+    }
+
     sf::CircleShape shape(scaledRadius, pointsCount);
     shape.setPosition(pos - sf::Vector2f{scaledRadius, scaledRadius});
     shape.setFillColor(toSFMLColor(color));

@@ -58,7 +58,7 @@ double Ball::getRadius () const { return this->radius; }
  * плотностью. В этом случае масса в условных единицах
  * эквивалентна объему: PI * radius^3 * 4. / 3.
  */
-double Ball::getMass () const { return std::pow (this->radius, 3) * M_PI * 4 / 3; }
+double Ball::getMass () const { return std::pow (this->radius, 3) * M_PI * 4. / 3.; }
 
 bool Ball::isCollidable() const {
     return this->collidable;
