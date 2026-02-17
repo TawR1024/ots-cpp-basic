@@ -26,6 +26,7 @@ void Physics::collideBalls (std::vector<Ball>& balls) const
     {
         for (auto b = std::next (a); b != balls.end (); ++b)
         {
+            if(a->isCollidable() && b->isCollidable()){ // check that both balls can collide
             const double distanceBetweenCenters2 = distance2 (a->getCenter (), b->getCenter ());
             const double collisionDistance       = a->getRadius () + b->getRadius ();
             const double collisionDistance2      = collisionDistance * collisionDistance;
@@ -34,6 +35,7 @@ void Physics::collideBalls (std::vector<Ball>& balls) const
             {
                 processCollision (*a, *b, distanceBetweenCenters2);
             }
+        }
         }
     }
 }

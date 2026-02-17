@@ -2,12 +2,13 @@
 
 #include <cmath>
 
-Ball::Ball (const Velocity velocity, const Point center, double radius, const Color color)
+Ball::Ball (const Velocity velocity, const Point center, double radius, const Color color, bool isCollidable)
 {
     this->velocity = velocity;
     this->center   = center;
     this->radius   = radius;
     this->color    = color;
+    this->collidable = isCollidable;
 }
 /**
  * Задает скорость объекта
@@ -56,3 +57,7 @@ double Ball::getRadius () const { return this->radius; }
  * эквивалентна объему: PI * radius^3 * 4. / 3.
  */
 double Ball::getMass () const { return std::pow (this->radius, 3) * M_PI * 4 / 3; }
+
+bool Ball::isCollidable() const {
+    return this->collidable;
+}

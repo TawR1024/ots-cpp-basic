@@ -10,8 +10,9 @@ private:
     Point center;
     double radius;
     Color color;
+    bool collidable;
 public:
-    Ball(const Velocity velocity, const Point center, double radius, const Color color);
+    Ball(const Velocity velocity, const Point center, double radius, const Color color, bool isCollidable);
     void setVelocity(const Velocity& velocity);
     Velocity getVelocity() const;
     void draw(Painter& painter) const;
@@ -19,4 +20,5 @@ public:
     Point getCenter() const;
     double getRadius() const;
     double getMass() const;
+    bool isCollidable() const;
 };
