@@ -1,6 +1,8 @@
 #include "Ball.hpp"
 
+
 #include <cmath>
+#include <fstream>
 
 Ball::Ball (const Velocity velocity, const Point center, double radius, const Color color, bool isCollidable)
 {
@@ -61,3 +63,4 @@ double Ball::getMass () const { return std::pow (this->radius, 3) * M_PI * 4 / 3
 bool Ball::isCollidable() const {
     return this->collidable;
 }
+
