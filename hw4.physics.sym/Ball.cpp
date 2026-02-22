@@ -1,16 +1,15 @@
 #include "Ball.hpp"
 
-
 #include <cmath>
 #include <fstream>
 
 Ball::Ball (const Velocity velocity, const Point center, double radius, const Color color, bool isCollidable)
-    : velocity(velocity)
-    , center(center)
-    , radius(radius)
-    , color(color)
-    , collidable(isCollidable)
-    , mass(std::pow(radius, 3) * M_PI * 4. / 3.) 
+    : velocity (velocity),
+      center (center),
+      radius (radius),
+      color (color),
+      collidable (isCollidable),
+      mass (std::pow (radius, 3) * M_PI * 4. / 3.)
 {
 }
 /**
@@ -59,9 +58,6 @@ double Ball::getRadius () const { return radius; }
  * плотностью. В этом случае масса в условных единицах
  * эквивалентна объему: PI * radius^3 * 4. / 3.
  */
-double Ball::getMass () const { return mass; } 
+double Ball::getMass () const { return mass; }
 
-bool Ball::isCollidable() const {
-    return collidable;
-}
-
+bool Ball::isCollidable () const { return collidable; }
