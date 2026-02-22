@@ -5,12 +5,13 @@
 #include <fstream>
 
 Ball::Ball (const Velocity velocity, const Point center, double radius, const Color color, bool isCollidable)
+    : velocity(velocity)
+    , center(center)
+    , radius(radius)
+    , color(color)
+    , collidable(isCollidable)
+    , mass(std::pow(radius, 3) * M_PI * 4. / 3.) 
 {
-    this->velocity = velocity;
-    this->center   = center;
-    this->radius   = radius;
-    this->color    = color;
-    this->collidable = isCollidable;
 }
 /**
  * Задает скорость объекта
@@ -21,7 +22,7 @@ void Ball::setVelocity (const Velocity& velocity) { this->velocity = velocity; }
 /**
  * @return скорость объекта
  */
-Velocity Ball::getVelocity () const { return this->velocity; }
+Velocity Ball::getVelocity () const { return velocity; }
 
 /**
  * @brief Выполняет отрисовку объекта
@@ -31,7 +32,7 @@ Velocity Ball::getVelocity () const { return this->velocity; }
  * Рисование выполняется путем вызова painter.draw(...)
  * @param painter контекст отрисовки
  */
-void Ball::draw (Painter& painter) const { painter.draw (this->center, this->radius, this->color); }
+void Ball::draw (Painter& painter) const { painter.draw (center, radius, color); }
 
 /**
  * Задает координаты центра объекта
@@ -42,14 +43,14 @@ void Ball::setCenter (const Point& center) { this->center = center; }
 /**
  * @return центр объекта
  */
-Point Ball::getCenter () const { return this->center; }
+Point Ball::getCenter () const { return center; }
 
 /**
  * @brief Возвращает радиус объекта
  * @details обратите внимание, что метод setRadius()
  * не требуется
  */
-double Ball::getRadius () const { return this->radius; }
+double Ball::getRadius () const { return radius; }
 
 /**
  * @brief Возвращает массу объекта
@@ -58,9 +59,9 @@ double Ball::getRadius () const { return this->radius; }
  * плотностью. В этом случае масса в условных единицах
  * эквивалентна объему: PI * radius^3 * 4. / 3.
  */
-double Ball::getMass () const { return std::pow (this->radius, 3) * M_PI * 4. / 3.; }
+double Ball::getMass () const { return mass; } 
 
 bool Ball::isCollidable() const {
-    return this->collidable;
+    return collidable;
 }
 

@@ -11,6 +11,7 @@ private:
     double radius;
     Color color;
     bool collidable;
+    double mass; 
 public:
     Ball() = default;
     Ball(const Velocity velocity, const Point center, double radius, const Color color, bool isCollidable);

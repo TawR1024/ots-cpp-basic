@@ -1,5 +1,6 @@
 #include "Physics.hpp"
 
+
 double dot (const Point& lhs, const Point& rhs) { return lhs.x * rhs.x + lhs.y * rhs.y; }
 
 Physics::Physics (double timePerTick) : timePerTick{timePerTick} {}
