@@ -45,6 +45,10 @@ void Physics::collideWithBox (std::vector<Ball>& balls) const
 {
     for (Ball& ball : balls)
     {
+        if (!ball.isCollidable()) {
+            continue; 
+        }
+        
         const Point  p = ball.getCenter ();
         const double r = ball.getRadius ();
         // определяет, находится ли v в диапазоне (lo, hi) (не включая границы)
