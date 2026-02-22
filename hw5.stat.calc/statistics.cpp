@@ -12,7 +12,7 @@ public:
 
 class Min : public IStatistics {
 public:
-	Min() : m_min{std::numeric_limits<double>::min()} {
+	Min() : m_min{std::numeric_limits<double>::max()} {
 	}
 
 	void update(double next) override {
@@ -20,7 +20,6 @@ public:
 			m_min = next;
 		}
 	}
-
 	double eval() const override {
 		return m_min;
 	}
