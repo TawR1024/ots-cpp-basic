@@ -1,10 +1,11 @@
 template <typename T>
-void print(T obj){
+void print (T obj)
+{
     std::cout << obj << std::endl;
 }
 
 template <typename T>
-void print(list::custom_list<T>& obj) {
+void print (list::custom_list<T>& obj)
+{
     std::cout << obj << std::endl;
 }
-

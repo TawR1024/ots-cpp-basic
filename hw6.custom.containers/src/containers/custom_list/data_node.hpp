@@ -10,7 +10,7 @@ class data_node
     data_t     data;
     data_node* next;
     data_node* prev;
-    friend class custom_list<data_t>; 
+    friend class custom_list<data_t>;
 
    public:
     explicit data_node (data_t value, data_node* next = nullptr, data_node* prev = nullptr)
