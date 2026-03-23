@@ -25,6 +25,13 @@ class custom_list : public container<T>
     custom_list ();
 
     /**
+     * @brief Constructor with initial size - creates a list with specified number of default-constructed elements
+     * @param size The initial size of the list
+     * @throws std::invalid_argument if size is negative
+     */
+    custom_list (size_t size);
+
+    /**
      * @brief Destructor - clears all elements from the list
      */
     ~custom_list ()
@@ -98,6 +105,19 @@ class custom_list : public container<T>
      */
     custom_list (const custom_list& other);
 
+    /**
+     * @brief Move constructor - transfers ownership of resources from another list
+     * @param other The list to move from
+     */
+    custom_list (custom_list&& other) noexcept;
+
+    /**
+     * @brief Move assignment operator - transfers ownership of resources from another list
+     * @param other The list to move from
+     * @return Reference to this list
+     */
+    custom_list& operator= (custom_list&& other) noexcept;
+
     // friend std::ostream& operator<< (std::ostream& os, const custom_list<T>& list);
 };
 
@@ -108,6 +128,28 @@ class custom_list : public container<T>
 template <typename T>
 custom_list<T>::custom_list () : head (nullptr), tail (nullptr), current_size (0)
 {
+}
+
+/**
+ * @brief Constructor with initial size implementation
+ * @tparam T The type of elements stored in the list
+ * @param size The initial size of the list
+ * @throws std::invalid_argument if size is negative
+ */
+template <typename T>
+custom_list<T>::custom_list (size_t size) : head (nullptr), tail (nullptr), current_size (0)
+{
+    if (size > 0)
+    {
+        for (size_t i = 0; i < size; ++i)
+        {
+            push_back (T{});
+        }
+    }
+    else if (size < 0)
+    {
+        throw std::invalid_argument ("Size cannot be negative");
+    }
 }
 
 /**
@@ -124,6 +166,19 @@ custom_list<T>::custom_list (const custom_list<T>& other) : head (nullptr), tail
         push_back (current->data);
         current = current->next;
     }
+}
+
+/**
+ * @brief Move constructor implementation
+ * @tparam T The type of elements stored in the list
+ * @param other The list to move from
+ */
+template <typename T>
+custom_list<T>::custom_list (custom_list<T>&& other) noexcept : head (other.head), tail (other.tail), current_size (other.current_size)
+{
+    other.head = nullptr;
+    other.tail = nullptr;
+    other.current_size = 0;
 }
 
 /**
@@ -408,6 +463,29 @@ custom_list<T>& custom_list<T>::operator= (const custom_list<T>& other)
             push_back (current->data);
             current = current->next;
         }
+    }
+    return *this;
+}
+
+/**
+ * @brief Move assignment operator implementation
+ * @tparam T The type of elements stored in the list
+ * @param other The list to move from
+ * @return Reference to this list
+ */
+template <typename T>
+custom_list<T>& custom_list<T>::operator= (custom_list<T>&& other) noexcept
+{
+    if (this != &other)
+    {
+        clear ();
+        head = other.head;
+        tail = other.tail;
+        current_size = other.current_size;
+        
+        other.head = nullptr;
+        other.tail = nullptr;
+        other.current_size = 0;
     }
     return *this;
 }
