@@ -254,3 +254,32 @@ TEST_F (CustomListTest, MoveAssignment)
     EXPECT_EQ (list_int.size (), 0);
     EXPECT_TRUE (list_int.empty ());
 }
+
+class TestObj
+{
+   public:
+    explicit TestObj (int* counter) : destructorCounter (counter) {}
+    TestObj (const TestObj& other) : destructorCounter (other.destructorCounter) {}
+
+    ~TestObj () { ++(*destructorCounter); }
+
+   private:
+    int* destructorCounter;
+};
+
+class Custom_list_deletion : public ::testing::Test
+{
+};
+
+TEST_F (Custom_list_deletion, CheckDestructorOnContainerDestroy)
+{
+    int destructor_counter = 0;
+
+    {
+        list::custom_list<TestObj> obj_list;
+        obj_list.push_back (TestObj (&destructor_counter));
+        obj_list.push_back (TestObj (&destructor_counter));
+    }
+
+    EXPECT_GE (destructor_counter, 2);
+}

@@ -236,3 +236,45 @@ TEST_F (Custom_vector_test, MoveAssignment)
     EXPECT_EQ (vec_int.size (), 0);
     EXPECT_TRUE (vec_int.empty ());
 }
+
+class TestObj
+{
+   public:
+    explicit TestObj (int* counter = nullptr) : destructorCounter (counter) {}
+
+    TestObj (const TestObj& other) : destructorCounter (other.destructorCounter) {}
+
+    TestObj& operator= (const TestObj& other)
+    {
+        destructorCounter = other.destructorCounter;
+        return *this;
+    }
+
+    ~TestObj ()
+    {
+        if (destructorCounter != nullptr)
+        {
+            ++(*destructorCounter);
+        }
+    }
+
+   private:
+    int* destructorCounter;
+};
+
+class Custom_vector_deletion : public ::testing::Test
+{
+};
+
+TEST_F (Custom_vector_deletion, CheckDestructorOnVectorDestroy)
+{
+    int destructor_counter = 0;
+
+    {
+        vector::custom_vector<TestObj> vec;
+        vec.push_back (TestObj (&destructor_counter));
+        vec.push_back (TestObj (&destructor_counter));
+    }
+
+    EXPECT_GE (destructor_counter, 2);
+}
