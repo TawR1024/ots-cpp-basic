@@ -258,28 +258,59 @@ TEST_F (CustomListTest, MoveAssignment)
 class TestObj
 {
    public:
-    explicit TestObj (int* counter) : destructorCounter (counter) {}
-    TestObj (const TestObj& other) : destructorCounter (other.destructorCounter) {}
+    explicit TestObj (int* constructor_ctr, int* destructor_ctr, int* copy_ctr = nullptr)
+        : constructorCounter (constructor_ctr),
+          destructorCounter (destructor_ctr),
+          copyCounter (copy_ctr)
+    {
+        if (constructorCounter != nullptr)
+        {
+            ++(*constructorCounter);
+        }
+    }
 
-    ~TestObj () { ++(*destructorCounter); }
+    TestObj (const TestObj& other)
+        : constructorCounter (other.constructorCounter),
+          destructorCounter (other.destructorCounter),
+          copyCounter (other.copyCounter)
+    {
+        if (copyCounter != nullptr)
+        {
+            ++(*copyCounter);
+        }
+    }
+
+    ~TestObj ()
+    {
+        if (destructorCounter != nullptr)
+        {
+            ++(*destructorCounter);
+        }
+    }
 
    private:
+    int* constructorCounter;
     int* destructorCounter;
+    int* copyCounter;
 };
 
 class Custom_list_deletion : public ::testing::Test
 {
 };
 
+
 TEST_F (Custom_list_deletion, CheckDestructorOnContainerDestroy)
 {
-    int destructor_counter = 0;
+    int constructor_counter = 0;
+    int destructor_counter  = 0;
+    int copy_counter        = 0;
 
     {
         list::custom_list<TestObj> obj_list;
-        obj_list.push_back (TestObj (&destructor_counter));
-        obj_list.push_back (TestObj (&destructor_counter));
+        obj_list.push_back (TestObj (&constructor_counter, &destructor_counter, &copy_counter));
+        obj_list.push_back (TestObj (&constructor_counter, &destructor_counter, &copy_counter));
     }
 
-    EXPECT_GE (destructor_counter, 2);
+    // check that destructor counter is equal to num objects + num temp-objects;
+    EXPECT_EQ (destructor_counter, constructor_counter + copy_counter);     
 }
