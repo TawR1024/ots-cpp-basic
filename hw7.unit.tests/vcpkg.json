@@ -1,0 +1,5 @@
+{
+    "name":"hw7-unit-tests",
+    "version": "1.0.0",
+    "dependencies":["gtest"]
+}

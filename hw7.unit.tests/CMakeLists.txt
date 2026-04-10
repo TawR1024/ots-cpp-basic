@@ -9,16 +9,8 @@ project(${PROJECT_NAME_SAFE})
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Prepare and clone gtest to local dir.
-include(FetchContent)
-FetchContent_Declare(
-  googletest
-  URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
-)
-
-FetchContent_MakeAvailable(googletest)
-
-include_directories(include)
+# add dependencies
+find_package(GTest CONFIG REQUIRED)
 
 file(GLOB_RECURSE SOURCE_FILES
     "src/*.cpp"
@@ -58,5 +50,7 @@ target_include_directories(
 
 # Link Google Test libraries
 # target_link_libraries(hello_test gtest_main gtest )
-target_link_libraries(custom_vector_test gtest_main gtest )
-target_link_libraries(custom_list_test gtest_main gtest )
+target_link_libraries(custom_vector_test GTest::gtest_main GTest::gtest)
+target_link_libraries(custom_list_test GTest::gtest_main GTest::gtest)
+
+
