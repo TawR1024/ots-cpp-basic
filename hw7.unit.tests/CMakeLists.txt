@@ -14,20 +14,28 @@ find_package(GTest CONFIG REQUIRED)
 
 file(GLOB_RECURSE SOURCE_FILES
     "src/*.cpp"
-    "src/*.hpp"
-    "include/*"
-    "main.cpp"
+    "include/*.cpp"
 )
 
-# Create executable Main
-add_executable(${PROJECT_NAME_SAFE} ${SOURCE_FILES})
+file(GLOB_RECURSE HEADER_FILES
+    "src/*.hpp"
+    "include/*.hpp"
+)
+
+# Create executable Main only if we have source files
+if(SOURCE_FILES)
+    add_executable(${PROJECT_NAME_SAFE} ${SOURCE_FILES} ${HEADER_FILES})
+else()
+    message(STATUS "No source files found for main executable, skipping ${PROJECT_NAME_SAFE}")
+endif()
 
 # Configure tests
 enable_testing()
+include(GoogleTest)
 
 add_executable(
   custom_vector_test
-  tests/custom_vector_test.cc        
+  tests/custom_vector_test.cc
 )
 
 target_include_directories(
@@ -38,7 +46,7 @@ target_include_directories(
 
 add_executable(
   custom_list_test
-  tests/custom_list_test.cc        
+  tests/custom_list_test.cc
 )
 
 target_include_directories(
@@ -47,10 +55,12 @@ target_include_directories(
   "include"
 )
 
-
 # Link Google Test libraries
-# target_link_libraries(hello_test gtest_main gtest )
 target_link_libraries(custom_vector_test GTest::gtest_main GTest::gtest)
 target_link_libraries(custom_list_test GTest::gtest_main GTest::gtest)
+
+# Discover tests after targets are created
+gtest_discover_tests(custom_vector_test)
+gtest_discover_tests(custom_list_test)
 
 
