@@ -259,9 +259,7 @@ class TestObj
 {
    public:
     explicit TestObj (int* constructor_ctr, int* destructor_ctr, int* copy_ctr = nullptr)
-        : constructorCounter (constructor_ctr),
-          destructorCounter (destructor_ctr),
-          copyCounter (copy_ctr)
+        : constructorCounter (constructor_ctr), destructorCounter (destructor_ctr), copyCounter (copy_ctr)
     {
         if (constructorCounter != nullptr)
         {
@@ -298,7 +296,6 @@ class Custom_list_deletion : public ::testing::Test
 {
 };
 
-
 TEST_F (Custom_list_deletion, CheckDestructorOnContainerDestroy)
 {
     int constructor_counter = 0;
@@ -312,5 +309,5 @@ TEST_F (Custom_list_deletion, CheckDestructorOnContainerDestroy)
     }
 
     // check that destructor counter is equal to num objects + num temp-objects;
-    EXPECT_EQ (destructor_counter, constructor_counter + copy_counter);     
+    EXPECT_EQ (destructor_counter, constructor_counter + copy_counter);
 }
