@@ -61,7 +61,7 @@ std::vector<char> hack (const std::vector<char>& original, const std::string& in
     throw std::logic_error ("Can't hack");
 }
 
-void worker (uint64_t start, uint64_t end, uint32_t targetCRC, std::vector<char> result, std::atomic<bool>& stop,
+void worker (uint64_t start, uint64_t end, uint32_t targetCRC, uint32_t prefixCRC, std::atomic<bool>& stop,
              std::atomic<uint32_t>& found)
 {
     std::cout << "starting thread: " << std::this_thread::get_id () << " start: " << start << " end: " << end
@@ -74,8 +74,10 @@ void worker (uint64_t start, uint64_t end, uint32_t targetCRC, std::vector<char>
             return;
         }
 
-        replaceLastFourBytes (result, static_cast<uint32_t> (i));
-        auto currentCRC = crc32 (result.data (), result.size ());
+        // replaceLastFourBytes (result, static_cast<uint32_t> (i));
+        char lastBytesp[4];
+        std::copy_n(reinterpret_cast<const char*>(&i), 4, lastBytesp);
+        auto currentCRC = crc32 (lastBytesp, 4, prefixCRC);
         if (currentCRC == targetCRC)
         {
             found.store (static_cast<uint32_t> (i));
@@ -93,10 +95,14 @@ std::vector<char> hack_threads (const std::vector<char>& original, const std::st
     const uint32_t targetCRC = crc32 (original.data (), original.size ());
 
     std::vector<char> result (original.size () + injection.size () + 4);
-    auto              it = std::copy (original.begin (), original.end (), result.begin ());
+    auto it = std::copy (original.begin (), original.end (), result.begin ());
     std::copy (injection.begin (), injection.end (), it);
 
-    const unsigned int t           = std::thread::hardware_concurrency ();
+    // calculate crc for original vector and ijection
+    uint32_t prefixCRC32 = ~crc32(result.data(), original.size() + injection.size());
+
+
+    const unsigned int t           = std::thread::hardware_concurrency ()/2;
     const uint64_t     totalValues = static_cast<uint64_t> (std::numeric_limits<uint32_t>::max ()) + 1;
     const uint64_t     chunkSize   = totalValues / t;
     const uint64_t     remainder   = totalValues % t;
@@ -111,7 +117,7 @@ std::vector<char> hack_threads (const std::vector<char>& original, const std::st
     for (unsigned int i = 0; i < t; ++i)
     {
         uint64_t end = start + chunkSize + (i < remainder ? 1 : 0);
-        threads.emplace_back (worker, start, end, targetCRC, result, std::ref (stop), std::ref (foundValue));
+        threads.emplace_back (worker, start, end, targetCRC, prefixCRC32, std::ref (stop), std::ref (foundValue));
         start = end;
     }
 
