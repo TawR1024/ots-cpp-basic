@@ -5,7 +5,7 @@ string(REPLACE "." "_" PROJECT_NAME_SAFE ${PROJECT_NAME})
 
 project(${PROJECT_NAME_SAFE})
 
-add_executable(${PROJECT_NAME_SAFE} main.cpp)
+add_executable(topk_words main.cpp)
 
 
 set_target_properties(${ROJECT_NAME_SAFE} PROPERTIES
