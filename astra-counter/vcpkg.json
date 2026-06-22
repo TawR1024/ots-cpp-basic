@@ -1,0 +1,11 @@
+{
+  "name": "astra-counter",
+  "version": "0.1.0",
+  "description": "Star counter for astrophotography JPEG images using OpenCL",
+  "dependencies": [
+    "opencv",
+    "opencl",
+    "boost-program-options",
+    "gtest"
+  ]
+}
