@@ -11,7 +11,7 @@ add_library(astra_counter_lib
 target_include_directories(astra_counter_lib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 target_link_libraries(astra_counter_lib
-    PUBLIC opencv_core opencv_imgcodecs
+    PUBLIC opencv_core opencv_imgcodecs opencv_imgproc
     PUBLIC OpenCL::OpenCL
     PUBLIC Boost::program_options
 )

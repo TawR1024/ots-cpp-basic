@@ -1,12 +1,19 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 namespace astra {
+
+struct StarPoint {
+    int x = 0;
+    int y = 0;
+};
 
 struct StarCountResult {
     std::string filename;
     int star_count = 0;
+    std::vector<StarPoint> positions;
 };
 
 class StarDetector {

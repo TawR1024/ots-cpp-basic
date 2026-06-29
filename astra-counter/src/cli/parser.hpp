@@ -7,6 +7,7 @@ namespace astra {
 
 struct CliOptions {
     std::string directory;
+    std::string output_annotated;
     float threshold = 0.5f;
     int window_size = 5;
 };

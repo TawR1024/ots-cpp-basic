@@ -17,7 +17,9 @@ CliOptions parse_args(int argc, char* argv[]) {
         ("threshold,t", boost::program_options::value<float>(&opts.threshold)->default_value(0.5f),
          "brightness threshold [0.0, 1.0]")
         ("window,w", boost::program_options::value<int>(&opts.window_size)->default_value(5),
-         "local maxima window size (odd, >= 3)");
+         "local maxima window size (odd, >= 3)")
+        ("output-annotated,o", boost::program_options::value<std::string>(&opts.output_annotated),
+         "save annotated images to this directory");
 
     boost::program_options::variables_map vm;
     try {
