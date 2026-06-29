@@ -5,6 +5,7 @@
 #include "cli/parser.hpp"
 #include "detector/star_detector.hpp"
 #include "scanner/directory_scanner.hpp"
+#include "utils/thread_pool.hpp"
 
 #include <opencv2/core.hpp>
 #include <opencv2/core/utils/logger.hpp>
@@ -43,16 +44,29 @@ int main(int argc, char* argv[]) {
             fs::create_directories(opts.output_annotated);
         }
 
-        astra::StarDetector detector{opts.threshold, opts.window_size};
+        astra::ThreadPool pool;
+        std::vector<std::future<astra::StarCountResult>> futures;
+        futures.reserve(files.size());
+
+        for (const auto& f : files) {
+            futures.push_back(pool.submit([f, &opts]() {
+                astra::StarDetector detector{opts.threshold, opts.window_size};
+                return detector.detect(f);
+            }));
+        }
 
         std::cout << "Processing " << files.size() << " image(s)...\n";
-        for (const auto& f : files) {
-            auto result = detector.detect(f);
-            std::cout << std::setw(40) << std::left << result.filename
-                      << " | stars: " << result.star_count << "\n";
+        for (auto& fut : futures) {
+            try {
+                auto result = fut.get();
+                std::cout << std::setw(40) << std::left << result.filename
+                          << " | stars: " << result.star_count << "\n";
 
-            if (!opts.output_annotated.empty()) {
-                save_annotated(result, opts.output_annotated);
+                if (!opts.output_annotated.empty()) {
+                    save_annotated(result, opts.output_annotated);
+                }
+            } catch (const std::exception& e) {
+                std::cerr << "Failed to process image | error: " << e.what() << "\n";
             }
         }
 

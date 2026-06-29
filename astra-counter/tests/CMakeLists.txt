@@ -7,6 +7,7 @@ add_executable(astra_counter_tests
     test_loader.cpp
     test_detector.cpp
     test_end_to_end.cpp
+    test_performance.cpp
 )
 
 target_link_libraries(astra_counter_tests
