@@ -4,6 +4,7 @@
 #include <opencv2/core.hpp>
 #include <opencv2/core/ocl.hpp>
 #include <opencv2/imgproc.hpp>
+#include <chrono>
 
 namespace astra {
 
@@ -11,14 +12,22 @@ StarDetector::StarDetector(float threshold, int window_size, bool use_gpu)
     : threshold_{threshold}, window_size_{window_size}, use_gpu_{use_gpu} {}
 
 StarCountResult StarDetector::detect(const std::string& filename) const {
+    auto t0 = std::chrono::steady_clock::now();
+    StarCountResult result;
+
     if (filename.empty()) {
-        return {};
+        return result;
     }
 
     if (use_gpu_ && cv::ocl::haveOpenCL()) {
-        return detect_gpu(filename);
+        result = detect_gpu(filename);
+    } else {
+        result = detect_cpu(filename);
     }
-    return detect_cpu(filename);
+
+    auto t1 = std::chrono::steady_clock::now();
+    result.elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(t1 - t0).count();
+    return result;
 }
 
 StarCountResult StarDetector::detect_cpu(const std::string& filename) const {

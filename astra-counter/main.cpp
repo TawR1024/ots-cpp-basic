@@ -86,11 +86,14 @@ int main(int argc, char* argv[]) {
         }
 
         std::cout << "Processing " << files.size() << " image(s)...\n";
+        long total_ms = 0;
         for (auto& fut : futures) {
             try {
                 auto result = fut.get();
                 std::cout << std::setw(40) << std::left << result.filename
                           << " | stars: " << result.star_count << "\n";
+
+                total_ms += result.elapsed_ms;
 
                 if (!opts.output_annotated.empty()) {
                     save_annotated(result, opts.output_annotated);
@@ -99,6 +102,9 @@ int main(int argc, char* argv[]) {
                 std::cerr << "Failed to process image | error: " << e.what() << "\n";
             }
         }
+
+        std::cout << "\n--- Summary ---\n";
+        std::cout << "Total:   " << total_ms << "ms\n";
 
         if (!opts.output_annotated.empty()) {
             std::cout << "\nAnnotated images saved to: " << opts.output_annotated << "\n";

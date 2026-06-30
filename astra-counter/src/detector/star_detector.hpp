@@ -14,6 +14,7 @@ struct StarCountResult {
     std::string filename;
     int star_count = 0;
     std::vector<StarPoint> positions;
+    long elapsed_ms = 0;
 };
 
 class StarDetector {

@@ -41,6 +41,7 @@ TEST_F(DetectorTest, SingleStar) {
     astra::StarDetector detector(0.1f, 5);
     auto result = detector.detect(path);
     EXPECT_EQ(result.star_count, 1);
+    EXPECT_GE(result.elapsed_ms, 0);
 }
 
 TEST_F(DetectorTest, MultipleStars) {
@@ -76,6 +77,7 @@ TEST_F(DetectorTest, EmptyPathReturnsZero) {
     astra::StarDetector detector(0.5f, 5);
     auto result = detector.detect("");
     EXPECT_EQ(result.star_count, 0);
+    EXPECT_GE(result.elapsed_ms, 0);
 }
 
 TEST_F(DetectorTest, GpuMatchesCpu) {
