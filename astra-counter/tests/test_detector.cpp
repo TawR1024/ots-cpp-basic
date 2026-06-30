@@ -77,3 +77,23 @@ TEST_F(DetectorTest, EmptyPathReturnsZero) {
     auto result = detector.detect("");
     EXPECT_EQ(result.star_count, 0);
 }
+
+TEST_F(DetectorTest, GpuMatchesCpu) {
+    auto path = make_image_with_stars(200, 200,
+        {{30, 30}, {80, 80}, {150, 150}, {100, 50}});
+
+    astra::StarDetector cpu_detector(0.1f, 5, false);
+    auto cpu_result = cpu_detector.detect(path);
+
+    astra::StarDetector gpu_detector(0.1f, 5, true);
+    auto gpu_result = gpu_detector.detect(path);
+
+    EXPECT_EQ(cpu_result.star_count, gpu_result.star_count);
+}
+
+TEST_F(DetectorTest, GpuFallbackOnNoOpenCL) {
+    auto path = make_image_with_stars(100, 100, {{50, 50}});
+    astra::StarDetector gpu_detector(0.1f, 5, true);
+    auto result = gpu_detector.detect(path);
+    EXPECT_GE(result.star_count, 1);
+}
