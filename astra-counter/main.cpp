@@ -4,10 +4,12 @@
 
 #include "cli/parser.hpp"
 #include "detector/star_detector.hpp"
+#include "opencl/engine.hpp"
 #include "scanner/directory_scanner.hpp"
 #include "utils/thread_pool.hpp"
 
 #include <opencv2/core.hpp>
+#include <opencv2/core/ocl.hpp>
 #include <opencv2/core/utils/logger.hpp>
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/imgproc.hpp>
@@ -15,7 +17,7 @@
 namespace fs = std::filesystem;
 
 static void save_annotated(const astra::StarCountResult& result,
-                           const std::string& output_dir) {
+                            const std::string& output_dir) {
     cv::Mat img = cv::imread(result.filename, cv::IMREAD_COLOR);
     if (img.empty()) return;
 
@@ -26,6 +28,32 @@ static void save_annotated(const astra::StarCountResult& result,
     fs::path src(result.filename);
     fs::path dst = fs::path(output_dir) / src.filename();
     cv::imwrite(dst.string(), img);
+}
+
+static bool resolve_use_gpu(astra::Backend backend) {
+    astra::OpenclEngine ocl;
+
+    if (backend == astra::Backend::Cpu) {
+        std::cout << "Backend: CPU (forced)\n";
+        return false;
+    }
+
+    if (backend == astra::Backend::Gpu) {
+        if (ocl.is_available() && ocl.cv_opencl_available()) {
+            std::cout << "Backend: GPU - " << ocl.device_name() << " (forced)\n";
+            return true;
+        }
+        std::cout << "Backend: CPU (GPU requested but not available)\n";
+        return false;
+    }
+
+    if (ocl.is_available() && ocl.cv_opencl_available()) {
+        std::cout << "Backend: GPU - " << ocl.device_name() << " (auto-detected)\n";
+        return true;
+    }
+
+    std::cout << "Backend: CPU (no GPU found)\n";
+    return false;
 }
 
 int main(int argc, char* argv[]) {
@@ -44,23 +72,28 @@ int main(int argc, char* argv[]) {
             fs::create_directories(opts.output_annotated);
         }
 
+        bool use_gpu = resolve_use_gpu(opts.backend);
+
         astra::ThreadPool pool;
         std::vector<std::future<astra::StarCountResult>> futures;
         futures.reserve(files.size());
 
         for (const auto& f : files) {
-            futures.push_back(pool.submit([f, &opts]() {
-                astra::StarDetector detector{opts.threshold, opts.window_size};
+            futures.push_back(pool.submit([f, &opts, use_gpu]() {
+                astra::StarDetector detector{opts.threshold, opts.window_size, use_gpu};
                 return detector.detect(f);
             }));
         }
 
         std::cout << "Processing " << files.size() << " image(s)...\n";
+        long total_ms = 0;
         for (auto& fut : futures) {
             try {
                 auto result = fut.get();
                 std::cout << std::setw(40) << std::left << result.filename
                           << " | stars: " << result.star_count << "\n";
+
+                total_ms += result.elapsed_ms;
 
                 if (!opts.output_annotated.empty()) {
                     save_annotated(result, opts.output_annotated);
@@ -69,6 +102,9 @@ int main(int argc, char* argv[]) {
                 std::cerr << "Failed to process image | error: " << e.what() << "\n";
             }
         }
+
+        std::cout << "\n--- Summary ---\n";
+        std::cout << "Total:   " << total_ms << "ms\n";
 
         if (!opts.output_annotated.empty()) {
             std::cout << "\nAnnotated images saved to: " << opts.output_annotated << "\n";

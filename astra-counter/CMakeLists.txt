@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 find_package(OpenCV REQUIRED)
-find_package(OpenCL REQUIRED)
+find_package(OpenCL)
 find_package(Boost REQUIRED COMPONENTS program_options)
 find_package(GTest REQUIRED)
 
