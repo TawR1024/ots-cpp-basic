@@ -29,12 +29,15 @@ TEST_F(LoaderTest, SyntheticGrayscaleLoad) {
     auto path = (tmp_dir / "gray.jpg").string();
     cv::imwrite(path, img);
 
-    auto data = astra::load_jpeg(path);
-    EXPECT_EQ(data.width, 20);
-    EXPECT_EQ(data.height, 10);
-    EXPECT_EQ(data.pixels.size(), static_cast<size_t>(200));
-    for (float p : data.pixels) {
-        EXPECT_NEAR(p, 1.0f, 0.02f);
+    cv::Mat data = astra::load_jpeg(path);
+    EXPECT_EQ(data.cols, 20);
+    EXPECT_EQ(data.rows, 10);
+    EXPECT_EQ(data.type(), CV_32FC1);
+    for (int y = 0; y < data.rows; ++y) {
+        const float* row = data.ptr<float>(y);
+        for (int x = 0; x < data.cols; ++x) {
+            EXPECT_NEAR(row[x], 1.0f, 0.02f);
+        }
     }
 }
 
@@ -47,8 +50,18 @@ TEST_F(LoaderTest, MixedColorImageBecomesGrayscale) {
     auto path = (tmp_dir / "color.jpg").string();
     cv::imwrite(path, img);
 
-    auto data = astra::load_jpeg(path);
-    EXPECT_EQ(data.width, 16);
-    EXPECT_EQ(data.height, 8);
-    EXPECT_EQ(data.pixels.size(), static_cast<size_t>(16 * 8));
+    cv::Mat data = astra::load_jpeg(path);
+    EXPECT_EQ(data.cols, 16);
+    EXPECT_EQ(data.rows, 8);
+    EXPECT_EQ(data.type(), CV_32FC1);
+    EXPECT_EQ(data.total(), static_cast<size_t>(16 * 8));
+}
+
+TEST_F(LoaderTest, ResultIsContinuous) {
+    cv::Mat img(10, 20, CV_8UC1, cv::Scalar(128));
+    auto path = (tmp_dir / "cont.jpg").string();
+    cv::imwrite(path, img);
+
+    cv::Mat data = astra::load_jpeg(path);
+    EXPECT_TRUE(data.isContinuous());
 }

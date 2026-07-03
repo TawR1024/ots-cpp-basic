@@ -35,12 +35,10 @@ StarCountResult StarDetector::detect_cpu(const std::string& filename) const {
     result.filename = filename;
     result.star_count = 0;
 
-    ImageData data = load_jpeg(filename);
-    if (data.width == 0 || data.height == 0) {
+    cv::Mat gray = load_jpeg(filename);
+    if (gray.empty()) {
         return result;
     }
-
-    cv::Mat gray(data.height, data.width, CV_32FC1, data.pixels.data());
 
     cv::Mat blurred;
     cv::GaussianBlur(gray, blurred, cv::Size{3, 3}, 0.5);
@@ -79,12 +77,11 @@ StarCountResult StarDetector::detect_gpu(const std::string& filename) const {
     result.filename = filename;
     result.star_count = 0;
 
-    ImageData data = load_jpeg(filename);
-    if (data.width == 0 || data.height == 0) {
+    cv::Mat gray_host = load_jpeg(filename);
+    if (gray_host.empty()) {
         return result;
     }
 
-    cv::Mat gray_host(data.height, data.width, CV_32FC1, data.pixels.data());
     cv::UMat gray = gray_host.getUMat(cv::ACCESS_READ);
 
     cv::UMat blurred;
