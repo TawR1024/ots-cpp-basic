@@ -4,7 +4,7 @@ add_library(astra_counter_lib
     loader/jpeg_loader.cpp
     opencl/engine.cpp
     detector/star_detector.cpp
-    utils/thread_pool.cpp
+    utils/thread_pool.hpp
     utils/result_writer.cpp
 )
 

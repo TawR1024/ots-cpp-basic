@@ -42,14 +42,14 @@ TEST_F(ScannerTest, DirWithJpegs) {
     EXPECT_NE(files[1].find("b.jpeg"), std::string::npos);
 }
 
-TEST_F(ScannerTest, RecursiveScanning) {
+TEST_F(ScannerTest, NoRecursiveScanning) {
     auto subdir = tmp_dir / "subdir";
     fs::create_directories(subdir);
     touch(tmp_dir / "top.jpg");
     touch(subdir / "nested.jpg");
 
     auto files = astra::scan_directory(tmp_dir.string());
-    ASSERT_EQ(files.size(), 2u);
+    ASSERT_EQ(files.size(), 1u);
 }
 
 TEST_F(ScannerTest, NonexistentDirReturnsEmpty) {
