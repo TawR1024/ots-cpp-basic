@@ -3,16 +3,18 @@
 #include <string>
 #include <vector>
 
-namespace astra {
+namespace astra
+{
 
-struct DetectionResult {
+struct DetectionResult
+{
     std::string filename;
-    int star_count = 0;
+    int         star_count = 0;
 };
 
 struct StarCountResult;
 
-void write_results(const std::vector<DetectionResult>& results);
-void write_results(const std::vector<StarCountResult>& results);
+void write_results (const std::vector<DetectionResult>& results);
+void write_results (const std::vector<StarCountResult>& results);
 
-} // namespace astra
+}  // namespace astra

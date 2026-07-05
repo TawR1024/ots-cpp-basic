@@ -3,8 +3,9 @@
 #include <opencv2/core.hpp>
 #include <string>
 
-namespace astra {
+namespace astra
+{
 
-cv::Mat load_jpeg(const std::string& filepath);
+cv::Mat load_jpeg (const std::string& filepath);
 
-} // namespace astra
+}  // namespace astra

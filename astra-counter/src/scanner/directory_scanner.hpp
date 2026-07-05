@@ -3,8 +3,9 @@
 #include <string>
 #include <vector>
 
-namespace astra {
+namespace astra
+{
 
-std::vector<std::string> scan_directory(const std::string& path);
+std::vector<std::string> scan_directory (const std::string& path);
 
-} // namespace astra
+}  // namespace astra
