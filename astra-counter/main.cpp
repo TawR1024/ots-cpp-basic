@@ -1,3 +1,4 @@
+#include <chrono>
 #include <filesystem>
 #include <iomanip>
 #include <iostream>
@@ -86,14 +87,17 @@ int main(int argc, char* argv[]) {
         }
 
         std::cout << "Processing " << files.size() << " image(s)...\n";
-        long total_ms = 0;
+        auto wall_start = std::chrono::steady_clock::now();
+        long sum_ms = 0;
+        int processed = 0;
         for (auto& fut : futures) {
             try {
                 auto result = fut.get();
                 std::cout << std::setw(40) << std::left << result.filename
                           << " | stars: " << result.star_count << "\n";
 
-                total_ms += result.elapsed_ms;
+                sum_ms += result.elapsed_ms;
+                ++processed;
 
                 if (!opts.output_annotated.empty()) {
                     save_annotated(result, opts.output_annotated);
@@ -102,9 +106,14 @@ int main(int argc, char* argv[]) {
                 std::cerr << "Failed to process image | error: " << e.what() << "\n";
             }
         }
+        auto wall_end = std::chrono::steady_clock::now();
+
+        auto wall_ms = std::chrono::duration_cast<std::chrono::milliseconds>(wall_end - wall_start).count();
+        long avg_ms = processed > 0 ? sum_ms / processed : 0;
 
         std::cout << "\n--- Summary ---\n";
-        std::cout << "Total:   " << total_ms << "ms\n";
+        std::cout << "Total:   " << wall_ms << "ms\n";
+        std::cout << "Average: " << avg_ms << "ms\n";
 
         if (!opts.output_annotated.empty()) {
             std::cout << "\nAnnotated images saved to: " << opts.output_annotated << "\n";
