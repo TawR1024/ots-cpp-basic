@@ -7,6 +7,7 @@
 #include "detector/star_detector.hpp"
 #include "opencl/engine.hpp"
 #include "scanner/directory_scanner.hpp"
+#include "utils/result_writer.hpp"
 #include "utils/thread_pool.hpp"
 
 #include <opencv2/core.hpp>
@@ -90,22 +91,27 @@ int main(int argc, char* argv[]) {
         auto wall_start = std::chrono::steady_clock::now();
         long sum_ms = 0;
         int processed = 0;
+        std::vector<astra::StarCountResult> all_results;
+        all_results.reserve(files.size());
+
         for (auto& fut : futures) {
             try {
                 auto result = fut.get();
-                std::cout << std::setw(40) << std::left << result.filename
-                          << " | stars: " << result.star_count << "\n";
-
                 sum_ms += result.elapsed_ms;
                 ++processed;
 
                 if (!opts.output_annotated.empty()) {
                     save_annotated(result, opts.output_annotated);
                 }
+
+                all_results.push_back(std::move(result));
             } catch (const std::exception& e) {
                 std::cerr << "Failed to process image | error: " << e.what() << "\n";
             }
         }
+
+        astra::write_results(all_results);
+
         auto wall_end = std::chrono::steady_clock::now();
 
         auto wall_ms = std::chrono::duration_cast<std::chrono::milliseconds>(wall_end - wall_start).count();
